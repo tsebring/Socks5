@@ -12,7 +12,19 @@ namespace Socks5_Minimal_Test
             Socks5Server f = new Socks5Server(IPAddress.Any, 10003);
             f.Authentication = true;
             f.OnAuthentication += f_OnAuthentication;
+            f.OnDataReceivedClient += f_OnDataReceivedClient;
+            f.OnDataReceivedRemote += f_OnDataReceivedRemote;
             f.Start();
+        }
+
+        static socks5.Socks.Frame f_OnDataReceivedRemote(object sender, socks5.TCP.FrameEventArgs e)
+        {
+            return e.Frame;
+        }
+
+        static socks5.Socks.Frame f_OnDataReceivedClient(object sender, socks5.TCP.FrameEventArgs e)
+        {
+            return e.Frame;
         }
 
         static socks5.Socks.LoginStatus f_OnAuthentication(object sender, socks5.TCP.SocksAuthenticationEventArgs e)

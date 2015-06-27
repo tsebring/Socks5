@@ -11,6 +11,10 @@ namespace socks5.Socks
         public delegate LoginStatus Authenticate(object sender, SocksAuthenticationEventArgs e);
         public event Authenticate OnClientAuthenticating = null;
 
+        public delegate Frame DataReceivedEventHandler(object sender, FrameEventArgs e);
+        public event DataReceivedEventHandler OnDataReceivedRemote = null;
+        public event DataReceivedEventHandler OnDataReceivedClient = null;
+
         public Client Client;
         public bool Authenticated { get; private set; }
         public bool Authentication = false;
@@ -65,7 +69,19 @@ namespace socks5.Socks
             SocksRequest req = Socks5.RequestTunnel(this);
             if (req == null) { Client.Disconnect(); return; }
             SocksTunnel x = new SocksTunnel(this, req, PacketSize, Timeout);
+            x.OnDataReceivedClient += x_OnDataReceivedClient;
+            x.OnDataReceivedRemote += x_OnDataReceivedRemote;
             x.Open();
+        }
+
+        Frame x_OnDataReceivedClient(object sender, FrameEventArgs e)
+        {
+            return OnDataReceivedClient(sender, e);
+        }
+
+        Frame x_OnDataReceivedRemote(object sender, FrameEventArgs e)
+        {
+            return OnDataReceivedRemote(sender, e);
         }
 
         void Client_onClientDisconnected(object sender, ClientEventArgs e)
@@ -88,6 +104,14 @@ namespace socks5.Socks
             Username = un;
             Password = pw;
             IP = ip;
+        }
+    }
+    public class Frame
+    {
+        public ArraySegment<byte> Data { get; private set; }
+        public Frame(ArraySegment<byte> data)
+        {
+            Data = data;
         }
     }
 }

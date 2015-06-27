@@ -10,6 +10,9 @@ namespace socks5
 {
     class SocksTunnel
     {
+        public event SocksClient.DataReceivedEventHandler OnDataReceivedRemote = null;
+        public event SocksClient.DataReceivedEventHandler OnDataReceivedClient = null;
+
         public SocksRequest Req;
 
         public SocksClient Client;
@@ -84,13 +87,31 @@ namespace socks5
 
         void RemoteClient_onDataReceived(object sender, DataEventArgs e)
         {
-            Client.Client.SendAsync(e.Buffer, e.Offset, e.Count);
+            if (OnDataReceivedRemote != null)
+            {
+                var frame = OnDataReceivedRemote(
+                    sender,
+                    new FrameEventArgs(new Frame(new ArraySegment<byte>(e.Buffer, e.Offset, e.Count))));
+
+                Client.Client.SendAsync(frame.Data.Array, frame.Data.Offset, frame.Data.Count);
+            }
+            else Client.Client.SendAsync(e.Buffer, e.Offset, e.Count);
+
             RemoteClient.ReceiveAsync();
         }
 
         void Client_onDataReceived(object sender, DataEventArgs e)
         {
-            RemoteClient.SendAsync(e.Buffer, e.Offset, e.Count);
+            if (OnDataReceivedClient != null)
+            {
+                var frame = OnDataReceivedClient(
+                    sender,
+                    new FrameEventArgs(new Frame(new ArraySegment<byte>(e.Buffer, e.Offset, e.Count))));
+
+                RemoteClient.SendAsync(frame.Data.Array, frame.Data.Offset, frame.Data.Count);
+            }
+            else RemoteClient.SendAsync(e.Buffer, e.Offset, e.Count);
+
             Client.Client.ReceiveAsync();
         }
     }

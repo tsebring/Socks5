@@ -30,4 +30,13 @@ namespace socks5.TCP
             User = loginInfo;
         }
     }
+
+    public class FrameEventArgs : EventArgs
+    {
+        public Frame Frame { get; private set; }
+        public FrameEventArgs(Frame frame)
+        {
+            Frame = frame;
+        }
+    }
 }

@@ -15,6 +15,8 @@ namespace socks5
         public bool Authentication { get { return Authenticate; } set { Authenticate = value; } }
 
         public event SocksClient.Authenticate OnAuthentication = null;
+        public event SocksClient.DataReceivedEventHandler OnDataReceivedRemote = null;
+        public event SocksClient.DataReceivedEventHandler OnDataReceivedClient = null;
 
         public TcpServer _server;
         private bool Authenticate = false;
@@ -57,9 +59,25 @@ namespace socks5
             SocksClient client = new SocksClient(e.Client);
             client.onClientDisconnected += client_onClientDisconnected;
             client.OnClientAuthenticating += client_OnClientAuthenticating;
+            client.OnDataReceivedClient += client_OnDataReceivedClient;
+            client.OnDataReceivedRemote += client_OnDataReceivedRemote;
             Clients.Add(client);
             client.Authentication = this.Authentication;
             client.Begin(this.PacketSize, this.Timeout);
+        }
+
+        Frame client_OnDataReceivedClient(object sender, FrameEventArgs e)
+        {
+            if (OnDataReceivedClient == null) return e.Frame;
+
+            return OnDataReceivedClient(sender, e);
+        }
+
+        Frame client_OnDataReceivedRemote(object sender, FrameEventArgs e)
+        {
+            if (OnDataReceivedRemote == null) return e.Frame;
+
+            return OnDataReceivedRemote(sender, e);
         }
 
         LoginStatus client_OnClientAuthenticating(object sender, SocksAuthenticationEventArgs e)
@@ -77,6 +95,8 @@ namespace socks5
         void client_onClientDisconnected(object sender, SocksClientEventArgs e)
         {
             e.Client.onClientDisconnected -= client_onClientDisconnected;
+            e.Client.OnDataReceivedClient -= client_OnDataReceivedClient;
+            e.Client.OnDataReceivedRemote -= client_OnDataReceivedRemote;
             this.Clients.Remove(e.Client);
         }
     }
