@@ -17,14 +17,18 @@ namespace Socks5_Minimal_Test
             f.Start();
         }
 
-        static socks5.Socks.Frame f_OnDataReceivedRemote(object sender, socks5.TCP.FrameEventArgs e)
+        //static socks5.Socks.Frame f_OnDataReceivedRemote(object sender, socks5.TCP.FrameEventArgs e)
+        static byte[] f_OnDataReceivedRemote(object sender, socks5.TCP.FrameEventArgs e)
         {
-            return e.Frame;
+            //return e.Frame;
+            return e.Data;
         }
 
-        static socks5.Socks.Frame f_OnDataReceivedClient(object sender, socks5.TCP.FrameEventArgs e)
+        //static socks5.Socks.Frame f_OnDataReceivedClient(object sender, socks5.TCP.FrameEventArgs e)
+        static byte[] f_OnDataReceivedClient(object sender, socks5.TCP.FrameEventArgs e)
         {
-            return e.Frame;
+            //return e.Frame;
+            return e.Data;
         }
 
         static socks5.Socks.LoginStatus f_OnAuthentication(object sender, socks5.TCP.SocksAuthenticationEventArgs e)

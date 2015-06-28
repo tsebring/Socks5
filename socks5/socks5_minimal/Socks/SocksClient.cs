@@ -11,7 +11,8 @@ namespace socks5.Socks
         public delegate LoginStatus Authenticate(object sender, SocksAuthenticationEventArgs e);
         public event Authenticate OnClientAuthenticating = null;
 
-        public delegate Frame DataReceivedEventHandler(object sender, FrameEventArgs e);
+        //public delegate Frame DataReceivedEventHandler(object sender, FrameEventArgs e);
+        public delegate byte[] DataReceivedEventHandler(object sender, FrameEventArgs e);
         public event DataReceivedEventHandler OnDataReceivedRemote = null;
         public event DataReceivedEventHandler OnDataReceivedClient = null;
 
@@ -74,12 +75,14 @@ namespace socks5.Socks
             x.Open();
         }
 
-        Frame x_OnDataReceivedClient(object sender, FrameEventArgs e)
+        //Frame x_OnDataReceivedClient(object sender, FrameEventArgs e)
+        byte[] x_OnDataReceivedClient(object sender, FrameEventArgs e)
         {
             return OnDataReceivedClient(sender, e);
         }
 
-        Frame x_OnDataReceivedRemote(object sender, FrameEventArgs e)
+        //Frame x_OnDataReceivedRemote(object sender, FrameEventArgs e)
+        byte[] x_OnDataReceivedRemote(object sender, FrameEventArgs e)
         {
             return OnDataReceivedRemote(sender, e);
         }
@@ -106,12 +109,12 @@ namespace socks5.Socks
             IP = ip;
         }
     }
-    public class Frame
-    {
-        public ArraySegment<byte> Data { get; private set; }
-        public Frame(ArraySegment<byte> data)
-        {
-            Data = data;
-        }
-    }
+    //public class Frame
+    //{
+    //    public ArraySegment<byte> Data { get; private set; }
+    //    public Frame(ArraySegment<byte> data)
+    //    {
+    //        Data = data;
+    //    }
+    //}
 }

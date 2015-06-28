@@ -66,16 +66,20 @@ namespace socks5
             client.Begin(this.PacketSize, this.Timeout);
         }
 
-        Frame client_OnDataReceivedClient(object sender, FrameEventArgs e)
+        //Frame client_OnDataReceivedClient(object sender, FrameEventArgs e)
+        byte[] client_OnDataReceivedClient(object sender, FrameEventArgs e)
         {
-            if (OnDataReceivedClient == null) return e.Frame;
+            //if (OnDataReceivedClient == null) return e.Frame;
+            if (OnDataReceivedClient == null) return e.Data;
 
             return OnDataReceivedClient(sender, e);
         }
 
-        Frame client_OnDataReceivedRemote(object sender, FrameEventArgs e)
+        //Frame client_OnDataReceivedRemote(object sender, FrameEventArgs e)
+        byte[] client_OnDataReceivedRemote(object sender, FrameEventArgs e)
         {
-            if (OnDataReceivedRemote == null) return e.Frame;
+            //if (OnDataReceivedRemote == null) return e.Frame;
+            if (OnDataReceivedRemote == null) return e.Data;
 
             return OnDataReceivedRemote(sender, e);
         }

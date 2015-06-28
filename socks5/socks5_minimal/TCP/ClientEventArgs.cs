@@ -33,10 +33,13 @@ namespace socks5.TCP
 
     public class FrameEventArgs : EventArgs
     {
-        public Frame Frame { get; private set; }
-        public FrameEventArgs(Frame frame)
+        //public Frame Frame { get; private set; }
+        public byte[] Data { get; set; }
+        //public FrameEventArgs(Frame frame)
+        public FrameEventArgs(byte[] data)
         {
-            Frame = frame;
+            Data = data;
+            //Frame = frame;
         }
     }
 }

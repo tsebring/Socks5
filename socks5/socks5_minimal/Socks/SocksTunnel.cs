@@ -91,9 +91,11 @@ namespace socks5
             {
                 var frame = OnDataReceivedRemote(
                     sender,
-                    new FrameEventArgs(new Frame(new ArraySegment<byte>(e.Buffer, e.Offset, e.Count))));
+                    new FrameEventArgs(e.Buffer.GetInBetween(e.Offset, e.Count + e.Offset)));
+                    //new FrameEventArgs(new Frame(new ArraySegment<byte>(e.Buffer, e.Offset, e.Count))));
 
-                Client.Client.SendAsync(frame.Data.Array, frame.Data.Offset, frame.Data.Count);
+                //Client.Client.SendAsync(frame.Data.Array, frame.Data.Offset, frame.Data.Count);
+                Client.Client.SendAsync(frame, 0, frame.Length);
             }
             else Client.Client.SendAsync(e.Buffer, e.Offset, e.Count);
 
@@ -106,9 +108,11 @@ namespace socks5
             {
                 var frame = OnDataReceivedClient(
                     sender,
-                    new FrameEventArgs(new Frame(new ArraySegment<byte>(e.Buffer, e.Offset, e.Count))));
+                    new FrameEventArgs(e.Buffer.GetInBetween(e.Offset, e.Count + e.Offset)));
+                    //new FrameEventArgs(new Frame(new ArraySegment<byte>(e.Buffer, e.Offset, e.Count))));
 
-                RemoteClient.SendAsync(frame.Data.Array, frame.Data.Offset, frame.Data.Count);
+                //RemoteClient.SendAsync(frame.Data.Array, frame.Data.Offset, frame.Data.Count);
+                RemoteClient.SendAsync(frame, 0, frame.Length);
             }
             else RemoteClient.SendAsync(e.Buffer, e.Offset, e.Count);
 
